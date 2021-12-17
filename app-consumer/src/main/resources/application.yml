@@ -1,0 +1,43 @@
+server:
+  port: 7090
+  http2:
+    enabled: false
+
+logging:
+  level:
+    root: WARN
+    ch.post: DEBUG
+    org.apache.kafka: INFO
+    org.springframework.cloud.sleuth: DEBUG
+
+management:
+  endpoint.health:
+    show-details: always
+    show-components: always
+    probes.enabled: true
+  security.enabled: false
+  endpoints.web.exposure.include: '*'
+  metrics:
+    enable:
+      jvm: false
+
+spring:
+  application:
+    name: app-consumer
+  sleuth:
+    enabled: true
+    kafka:
+      enabled: true
+    opentracing:
+      enabled: true
+  kafka:
+    bootstrap-servers: localhost:9091
+    consumer:
+      client-id: app-consumer.Consumer
+      group-id: app-consumer.Consumer
+      auto-offset-reset: latest
+      enable-auto-commit: false
+      properties:
+        isolation.level: read_committed
+        max.poll.records: 10
+        metrics.recording.level: TRACE

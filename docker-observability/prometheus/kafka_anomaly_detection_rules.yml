@@ -1,0 +1,14 @@
+# https://about.gitlab.com/blog/2019/07/23/anomaly-detection-using-prometheus/
+groups:
+  - name: kafka-producer-anomaly-detection
+    rules:
+      - record: job:kafka_producer_record_send:rate1m
+        expr: sum without(kafka_version) (rate(kafka_producer_record_send_total[1m]))
+
+      # Long-term average value for the series
+      - record: job:kafka_producer_record_send:rate1m:avg_over_time_1h
+        expr: avg_over_time(job:kafka_producer_record_send:rate1m[1h])
+
+      # Long-term standard deviation for the series
+      - record: job:kafka_producer_record_send:rate1m:stddev_over_time_1h
+        expr: stddev_over_time(job:kafka_producer_record_send:rate1m[1h])

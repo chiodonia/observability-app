@@ -1,0 +1,40 @@
+server:
+  port: 7080
+  http2:
+    enabled: false
+
+logging:
+  level:
+    root: WARN
+    ch.post: DEBUG
+    org.apache.kafka: INFO
+    org.springframework.cloud.sleuth: DEBUG
+
+management:
+  endpoint.health:
+    show-details: always
+    show-components: always
+    probes.enabled: true
+  security.enabled: false
+  endpoints.web.exposure.include: '*'
+  metrics:
+    enable:
+      jvm: false
+
+spring:
+  application:
+    name: app-producer
+  sleuth:
+    enabled: true
+    kafka:
+      enabled: true
+    opentracing:
+      enabled: true
+  kafka:
+    bootstrap-servers: localhost:9091
+    producer:
+      client-id: app-producer.Producer
+      compression-type: gzip
+      properties:
+        enable.idempotence: true
+        metrics.recording.level: TRACE

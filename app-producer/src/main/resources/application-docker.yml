@@ -1,0 +1,8 @@
+server:
+  port: 8080
+
+spring:
+  zipkin:
+    base-url: http://jaeger:9411
+  kafka:
+    bootstrap-servers: kafka:9080
