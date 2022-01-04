@@ -5,6 +5,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
+import org.apache.commons.lang3.RandomStringUtils
 import org.apache.kafka.clients.producer.Callback
 import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -14,13 +15,17 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.util.concurrent.Future
 
+const val KEY_LENGTH = 10
+
 @Service
 class ProducerService(val producer: Producer<String, String>) {
     private val logger = LoggerFactory.getLogger(ProducerService::class.java)
 
     @Scheduled(fixedRate = 1000)
     fun produce() {
-        send("0", "*".repeat(1024)) { m: RecordMetadata, e: Exception? ->
+        val key = RandomStringUtils.randomAlphanumeric(KEY_LENGTH);
+
+        send(key, "*".repeat(1024)) { m: RecordMetadata, e: Exception? ->
             when (e) {
                 null -> logger.info("sent ${m.topic()}/${m.partition()}@${m.offset()}")
                 else -> logger.error("General error", e)
