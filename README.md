@@ -6,17 +6,28 @@ mvn clean install
 ```
 
 ## Run
+### app-producer
+http://localhost:8080/actuator/prometheus  
 http://localhost:8080/produce?records=1000&size=1024&delay=1000
-http://localhost:8090/consume?polls=100&duration=100&delay=1000
-http://localhost:8080/actuator/prometheus
-http://localhost:8090/actuator/prometheus
 
-bootstrap.server=localhost:9094
-http://localhost:3000
+### app-consumer
+http://localhost:8090/actuator/prometheus  
+http://localhost:8090/consume?polls=100&duration=100&delay=1000
+
+### grafana
+http://localhost:3000  
+username: admin  
+password: admin
+
+### prometheus
 http://localhost:9090
+
+### lag exporter
 http://localhost:8000
-http://localhost:9411
-http://localhost:16686
+
+### jaeger tracing
+http://localhost:9411  
+http://localhost:16686 (Jaeger UI)
 
 ## Anomaly detection
 https://about.gitlab.com/blog/2019/07/23/anomaly-detection-using-prometheus/
@@ -50,6 +61,14 @@ kafka_consumer_fetch_manager_records_lag_max{client_id="app.Consumer",kafka_vers
 ```
 kafka_consumergroup_group_max_lag{cluster_name="local",group="app.Consumer",}
 ```
+
+#### Using z-score for anomaly detection
+The following metrics can be used to detect anomalies on the consumer side: 
+- kafka_consumergroup_group_lag (group offset lag of a partition)
+- kafka_consumer_request_total (the total number of requests sent)
+
+z-score for these two metrics is calculated via Prometheus recording rules (see _kafka_anomaly_detection_rules.yml_) and
+presented in this Grafana dashboard: _Kafka Clients - Consumers [z-score metrics]_
 
 ## Metrics
 https://www.datadoghq.com/blog/monitoring-kafka-performance-metrics/#kafka-producer-metrics

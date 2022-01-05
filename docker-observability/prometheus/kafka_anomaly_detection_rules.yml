@@ -2,13 +2,40 @@
 groups:
   - name: kafka-producer-anomaly-detection
     rules:
+      # kafka_producer_record_send [1m rate]
       - record: job:kafka_producer_record_send:rate1m
         expr: sum without(kafka_version) (rate(kafka_producer_record_send_total[1m]))
 
-      # Long-term average value for the series
+      # kafka_producer_record_send [long-term average]
       - record: job:kafka_producer_record_send:rate1m:avg_over_time_1h
         expr: avg_over_time(job:kafka_producer_record_send:rate1m[1h])
 
-      # Long-term standard deviation for the series
+      # kafka_producer_record_send [long-term standard deviation]
       - record: job:kafka_producer_record_send:rate1m:stddev_over_time_1h
         expr: stddev_over_time(job:kafka_producer_record_send:rate1m[1h])
+
+
+      # kafka_consumer_request_total [1m rate]
+      - record: job:kafka_consumer_request_total:rate1m
+        expr: sum without(kafka_version, instance, job) (rate(kafka_consumer_request_total[1m]))
+
+      # kafka_consumer_request_total [long-term average]
+      - record: job:kafka_consumer_request_total:rate1m:avg_over_time_1h
+        expr: avg_over_time(job:kafka_consumer_request_total:rate1m[1h])
+
+      # kafka_consumer_request_total [long-term standard deviation]
+      - record: job:kafka_consumer_request_total:rate1m:stddev_over_time_1h
+        expr: stddev_over_time(job:kafka_consumer_request_total:rate1m[1h])
+
+
+      # kafka_consumergroup_group_lag [short-term metric]
+      - record: job:kafka_consumergroup_group_lag
+        expr: sum without (client_id, cluster_name, group, instance, consumer_id, member_host, partition) (kafka_consumergroup_group_lag)
+
+      # kafka_consumergroup_group_lag [long-term average]
+      - record: job:kafka_consumergroup_group_lag:avg_over_time_1h
+        expr: avg_over_time(job:kafka_consumergroup_group_lag[1h])
+
+      # kafka_consumergroup_group_lag [long-term standard deviation]
+      - record: job:kafka_consumergroup_group_lag:stddev_over_time_1h
+        expr: stddev_over_time(job:kafka_consumergroup_group_lag[1h])
